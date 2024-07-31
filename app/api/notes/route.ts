@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/utils/mongodb';
 import User from '@/models/User';
+import { analyzeEmotion } from '@/utils/analyzeEmotions';
 
 async function getUserFromToken(request: NextRequest) {
   const token = request.headers.get('Authorization')?.split(' ')[1];
@@ -18,6 +19,7 @@ async function getUserFromToken(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  console.log("POST request received");
   await dbConnect();
   const user = await getUserFromToken(request);
 
@@ -26,41 +28,46 @@ export async function POST(request: NextRequest) {
   }
 
   const { content } = await request.json();
+  console.log("Note content:", content);
 
   try {
+    console.log("Analyzing emotion...");
+    const emotion = analyzeEmotion(content);
+    console.log("Analyzed emotion:", emotion);
+
     const updatedUser = await User.findOneAndUpdate(
       { email: user.email },
-      { $push: { notes: { content } } },
+      { $push: { notes: { content, emotion } } },
       { new: true }
     );
-    if (updatedUser) {
-      return NextResponse.json(updatedUser.notes);
-    } else {
-      return NextResponse.json({ error: 'Failed to add note' }, { status: 400 });
-    }
+    console.log("Updated user notes:", updatedUser?.notes); // Add null check
+
+    return NextResponse.json(updatedUser?.notes); // Add null check
   } catch (error) {
+    console.error("Error in POST:", error);
     return NextResponse.json({ error: 'Failed to add note' }, { status: 400 });
   }
 }
 
 export async function GET(request: NextRequest) {
-    await dbConnect();
-    const user = await getUserFromToken(request);
+  await dbConnect();
+  const user = await getUserFromToken(request);
 
-    if (!user) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-    try {
-        const foundUser = await User.findOne({ email: user.email });
-        if (foundUser) {
-            return NextResponse.json(foundUser.notes);
-        } else {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
-        }
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to retrieve notes' }, { status: 400 });
+  try {
+    const foundUser = await User.findOne({ email: user.email });
+    if (foundUser) {
+      console.log(foundUser)
+      return NextResponse.json(foundUser.notes);
+    } else {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to retrieve notes' }, { status: 400 });
+  }
 }
 
 export async function DELETE(request: NextRequest) {

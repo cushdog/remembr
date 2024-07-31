@@ -7,7 +7,9 @@ interface NotesStyles {
   addNoteButton: CSSProperties;
   notesList: CSSProperties;
   noteItem: CSSProperties;
+  noteContent: CSSProperties;
   deleteButton: CSSProperties;
+  emotion: CSSProperties;
 }
 
 export const styles: NotesStyles = {
@@ -44,24 +46,32 @@ export const styles: NotesStyles = {
   noteItem: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     padding: '10px',
     border: '1px solid #ccc',
     borderRadius: '4px',
     backgroundColor: '#f8f9fa',
   },
-  deleteButton: {
-    backgroundColor: '#dc3545',
-    color: 'white',
-    border: 'none',
-    borderRadius: '50%',
-    width: '24px',
-    height: '24px',
-    fontSize: '16px',
-    lineHeight: 1,
-    cursor: 'pointer',
+  noteContent: {
     display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'column',
+    flexGrow: 1,
+    marginRight: '10px',
+  },
+  deleteButton: {
+    backgroundColor: 'transparent',
+    color: '#dc3545',
+    border: 'none',
+    fontSize: '20px',
+    cursor: 'pointer',
+    padding: '0',
+    display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emotion: {
+    fontSize: '0.8em',
+    color: '#666',
+    marginTop: '5px',
   },
 };

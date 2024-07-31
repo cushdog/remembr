@@ -1,8 +1,8 @@
-// models/User.ts
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
 interface INote {
   content: string;
+  emotion: string;
   createdAt: Date;
 }
 
@@ -15,6 +15,7 @@ interface IUser extends Document {
 
 const noteSchema: Schema<INote> = new Schema({
   content: { type: String, required: true },
+  emotion: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
