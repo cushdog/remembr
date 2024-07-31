@@ -21,11 +21,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
   }
 
-  const token = jwt.sign(
-    { userId: user._id, name: user.name, email: user.email, username: user.name },
-    process.env.JWT_SECRET!,
-    { expiresIn: '1h' }
-  );
+  if (!process.env.JWT_SECRET) {
+    console.error('JWT_SECRET is not set');
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
 
-  return NextResponse.json({ token, user: { name: user.name, email: user.email, username: user.name } });
+  try {
+    const token = jwt.sign(
+      { userId: user._id, name: user.name, email: user.email, username: user.name },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    return NextResponse.json({ token, user: { name: user.name, email: user.email, username: user.name } });
+  } catch (error) {
+    console.error('Error generating token:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
 }
