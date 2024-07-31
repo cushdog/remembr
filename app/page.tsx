@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
+import { Suspense } from "react";
+import Notes from "@/custom_components/notes/notes";
 
 export default function SearchPage() {
   const router = useRouter();
@@ -31,6 +33,9 @@ export default function SearchPage() {
       ) : (
         <Button onClick={handleLoginButtonClick} className="absolute top-4 right-4">Login</Button>
       )}
+      <Suspense fallback={<div>Loading notes...</div>}>
+        <Notes />
+      </Suspense>
     </div>
   );
 }
