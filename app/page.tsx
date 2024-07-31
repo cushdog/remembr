@@ -12,6 +12,10 @@ export default function SearchPage() {
   const handleLoginButtonClick = () => {
     router.push('/login');
   };
+  
+  const handleRegisterButtonClick = () => {
+    router.push('/register');
+  };
 
   const handleLogoutButtonClick = () => {
     localStorage.removeItem('token');
@@ -21,6 +25,7 @@ export default function SearchPage() {
 
   return (
     <div className="relative flex justify-center items-center h-screen">
+        <Button onClick={handleRegisterButtonClick} className="absolute top-4 left-4">Register</Button>
       {user ? (
         <Button onClick={handleLogoutButtonClick} className="absolute top-4 right-4">Logout</Button>
       ) : (
